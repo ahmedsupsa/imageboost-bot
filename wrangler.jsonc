@@ -6,6 +6,6 @@
   "workers_dev": true,
   "images": { "binding": "IMAGES" },
   "kv_namespaces": [
-    { "binding": "SESSIONS", "id": "PUT_YOUR_KV_NAMESPACE_ID_HERE" }
+    { "binding": "SESSIONS", "id": "4bc4dfc5b5de4ebaac384fec0f9cc814" }
   ]
 }
