@@ -136,11 +136,29 @@ async function onCallback(e: Env, q: NonNullable<TgUpdate['callback_query']>) {
   await showPanel(e, chatId, s, m.message_id);
 }
 
+function setupPage(message = '') {
+  const note = message ? `<div class="note">${message}</div>` : '';
+  return new Response(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ImageBoost Setup</title><style>body{font-family:system-ui;background:#0b1020;color:#fff;display:grid;place-items:center;min-height:100vh;margin:0}.card{width:min(92%,440px);background:#151b2f;padding:28px;border-radius:22px;box-shadow:0 20px 60px #0006}h1{margin-top:0}p{color:#b9c1d9;line-height:1.7}input,button{box-sizing:border-box;width:100%;padding:14px;border-radius:12px;font-size:16px}input{background:#0d1325;color:#fff;border:1px solid #303955;margin:12px 0}button{border:0;background:#fff;color:#111;font-weight:700;cursor:pointer}.note{background:#202945;padding:12px;border-radius:12px;margin-bottom:14px}</style></head><body><main class="card"><h1>✨ ImageBoost</h1><p>ربط بوت Telegram بالـWorker. أدخل WEBHOOK_SECRET نفسه المحفوظ في Cloudflare. لا يتم وضع BOT_TOKEN في هذه الصفحة.</p>${note}<form method="post" action="/setup"><input type="password" name="secret" placeholder="WEBHOOK_SECRET" required autocomplete="off"><button type="submit">ربط Telegram</button></form></main></body></html>`, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } });
+}
+
+async function setupWebhook(req: Request, e: Env) {
+  const form = await req.formData();
+  const secret = String(form.get('secret') || '');
+  if (!secret || secret !== e.WEBHOOK_SECRET) return setupPage('❌ WEBHOOK_SECRET غير صحيح.');
+  const origin = new URL(req.url).origin;
+  const r = await fetch(api(e, 'setWebhook'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ url: `${origin}/telegram`, secret_token: e.WEBHOOK_SECRET, allowed_updates: ['message', 'callback_query'] }) });
+  const result: any = await r.json();
+  if (!r.ok || !result.ok) return setupPage(`❌ تعذر الربط: ${String(result.description || r.status)}`);
+  return setupPage('✅ تم ربط Telegram بنجاح. افتح البوت واضغط Start ثم أرسل صورة.');
+}
+
 export default {
   async fetch(req: Request, e: Env): Promise<Response> {
     const u = new URL(req.url);
-    if (u.pathname === '/health') return Response.json({ ok: true, service: 'ImageBoost Bot', version: '0.2.0' });
-    if (req.method !== 'POST' || u.pathname !== '/telegram') return new Response('ImageBoost Bot v0.2', { status: 200 });
+    if (u.pathname === '/health') return Response.json({ ok: true, service: 'ImageBoost Bot', version: '0.3.0' });
+    if (u.pathname === '/setup' && req.method === 'GET') return setupPage();
+    if (u.pathname === '/setup' && req.method === 'POST') return setupWebhook(req, e);
+    if (req.method !== 'POST' || u.pathname !== '/telegram') return new Response('ImageBoost Bot v0.3', { status: 200 });
     if (req.headers.get('X-Telegram-Bot-Api-Secret-Token') !== e.WEBHOOK_SECRET) return new Response('Forbidden', { status: 403 });
     try {
       const x = await req.json<TgUpdate>();
