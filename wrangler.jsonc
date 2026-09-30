@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "imageboost-bot",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-30",
+  "workers_dev": true,
+  "images": { "binding": "IMAGES" },
+  "kv_namespaces": [
+    { "binding": "SESSIONS", "id": "PUT_YOUR_KV_NAMESPACE_ID_HERE" }
+  ]
+}
