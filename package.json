@@ -1,6 +1,6 @@
 {
   "name": "imageboost-telegram-worker",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "type": "module",
   "description": "Open-source Telegram image enhancement bot for Cloudflare Workers (non-AI pipeline).",
@@ -14,6 +14,6 @@
   "devDependencies": {
     "typescript": "^5.9.2",
     "wrangler": "^4.42.0",
-    "@cloudflare/workers-types": "^4.20260925.0"
+    "@cloudflare/workers-types": "^5.20260929.1"
   }
 }
