@@ -1,10 +1,19 @@
 {
   "name": "imageboost-telegram-worker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "type": "module",
   "description": "Open-source Telegram image enhancement bot for Cloudflare Workers (non-AI pipeline).",
   "license": "MIT",
-  "scripts": {"dev":"wrangler dev --remote","deploy":"wrangler deploy","typecheck":"tsc --noEmit","webhook":"node scripts/set-webhook.mjs"},
-  "devDependencies": {"typescript":"^5.9.2","wrangler":"^4.42.0","@cloudflare/workers-types":"^4.20260925.0"}
+  "scripts": {
+    "dev": "wrangler dev --remote",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "webhook": "node scripts/set-webhook.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "wrangler": "^4.42.0",
+    "@cloudflare/workers-types": "^4.20260925.0"
+  }
 }
